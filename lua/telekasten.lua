@@ -2716,12 +2716,11 @@ local function ToggleTodo(opts)
     opts = opts or {}
     local mode = vim.api.nvim_get_mode()["mode"]
     local cursorlinenr = vim.api.nvim_win_get_cursor(0)[1]
-    if mode == "n" then
-        local startline = cursorlinenr
-        local endline = cursorlinenr
-    else
-        local startline = vim.api.nvim_buf_get_mark(0, "<")[1]
-        local endline = vim.api.nvim_buf_get_mark(0, ">")[1]
+    local startline = cursorlinenr
+    local endline = cursorlinenr
+    if mode ~= "n" then
+        startline = vim.api.nvim_buf_get_mark(0, "<")[1]
+        endline = vim.api.nvim_buf_get_mark(0, ">")[1]
         if startline <= 0 or endline <= 0 then
             startline = cursorlinenr
             endline = cursorlinenr
