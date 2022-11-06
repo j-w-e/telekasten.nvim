@@ -2714,17 +2714,23 @@ local function ToggleTodo(opts)
     -- - [x] by -
     -- enter insert mode if opts.i == true
     opts = opts or {}
-    local startline = vim.api.nvim_buf_get_mark(0, "<")[1]
-    local endline = vim.api.nvim_buf_get_mark(0, ">")[1]
+    local mode = vim.api.nvim_get_mode()["mode"]
     local cursorlinenr = vim.api.nvim_win_get_cursor(0)[1]
+    if mode == "n" then
+        local startline = cursorlinenr
+        local endline = cursorlinenr
+    else
+        local startline = vim.api.nvim_buf_get_mark(0, "<")[1]
+        local endline = vim.api.nvim_buf_get_mark(0, ">")[1]
+        if startline <= 0 or endline <= 0 then
+            startline = cursorlinenr
+            endline = cursorlinenr
+        end
+    end
     -- to avoid the visual range marks not being reset when calling
     -- command from normal mode
     vim.api.nvim_buf_set_mark(0, "<", 0, 0, {})
     vim.api.nvim_buf_set_mark(0, ">", 0, 0, {})
-    if startline <= 0 or endline <= 0 then
-        startline = cursorlinenr
-        endline = cursorlinenr
-    end
     for curlinenr = startline, endline do
         local curline =
             vim.api.nvim_buf_get_lines(0, curlinenr - 1, curlinenr, false)[1]
